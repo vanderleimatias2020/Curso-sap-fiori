@@ -11,9 +11,9 @@ public section.
      DATACRIACAO type TIMESTAMP,
      CRIADOPOR type string,
      CLIENTEID type I,
-     TOTALITENS type P length 16 decimals 0,
-     TOTALFRETE type P length 16 decimals 0,
-     TOTALORDEM type P length 16 decimals 0,
+     TOTALITENS type P length 9 decimals 2,
+     TOTALFRETE type P length 9 decimals 2,
+     TOTALORDEM type P length 9 decimals 2,
      STATUS type string,
   end of TS_OVCAB .
   types:
@@ -491,6 +491,8 @@ lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' )->add(
 lo_property = lo_entity_type->create_property( iv_property_name = 'TotalItens' iv_abap_fieldname = 'TOTALITENS' ). "#EC NOTEXT
 lo_property->set_label_from_text_element( iv_text_element_symbol = '005' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
 lo_property->set_type_edm_decimal( ).
+lo_property->set_precison( iv_precision = 2 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 16 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -503,6 +505,8 @@ lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' )->add(
 lo_property = lo_entity_type->create_property( iv_property_name = 'TotalFrete' iv_abap_fieldname = 'TOTALFRETE' ). "#EC NOTEXT
 lo_property->set_label_from_text_element( iv_text_element_symbol = '006' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
 lo_property->set_type_edm_decimal( ).
+lo_property->set_precison( iv_precision = 2 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 16 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -515,6 +519,8 @@ lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' )->add(
 lo_property = lo_entity_type->create_property( iv_property_name = 'TotalOrdem' iv_abap_fieldname = 'TOTALORDEM' ). "#EC NOTEXT
 lo_property->set_label_from_text_element( iv_text_element_symbol = '007' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
 lo_property->set_type_edm_decimal( ).
+lo_property->set_precison( iv_precision = 2 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 16 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -707,7 +713,7 @@ lo_entity_set->set_filter_required( abap_false ).
 *&---------------------------------------------------------------------*
 
 
-  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20240530102603'.                  "#EC NOTEXT
+  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20240602063205'.                  "#EC NOTEXT
   rv_last_modified = super->get_last_modified( ).
   IF rv_last_modified LT lc_gen_date_time.
     rv_last_modified = lc_gen_date_time.
