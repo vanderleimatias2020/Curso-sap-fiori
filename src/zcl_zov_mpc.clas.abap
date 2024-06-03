@@ -164,7 +164,7 @@ lo_assoc_set = model->create_association_set( iv_association_set_name  = 'CabIte
 
 * Navigation Properties for entity - OVCab
 lo_entity_type = model->get_entity_type( iv_entity_name = 'OVCab' ). "#EC NOTEXT
-lo_nav_property = lo_entity_type->create_navigation_property( iv_property_name  = 'toOvItem' "#EC NOTEXT
+lo_nav_property = lo_entity_type->create_navigation_property( iv_property_name  = 'toOVItem' "#EC NOTEXT
                                                               iv_abap_fieldname = 'TOOVITEM' "#EC NOTEXT
                                                               iv_association_name = 'CabItem' ). "#EC NOTEXT
   endmethod.
@@ -713,7 +713,7 @@ lo_entity_set->set_filter_required( abap_false ).
 *&---------------------------------------------------------------------*
 
 
-  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20240602063205'.                  "#EC NOTEXT
+  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20240603103835'.                  "#EC NOTEXT
   rv_last_modified = super->get_last_modified( ).
   IF rv_last_modified LT lc_gen_date_time.
     rv_last_modified = lc_gen_date_time.
