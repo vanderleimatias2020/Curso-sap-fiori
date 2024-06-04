@@ -199,13 +199,39 @@ CLASS ZCL_ZOV_DPC_EXT IMPLEMENTATION.
 
 
   METHOD ovcabset_get_entityset.
-    DATA: lt_cab       TYPE  STANDARD TABLE OF zovcab,
-          ls_cab       TYPE zovcab,
-          ls_entityset LIKE LINE OF et_entityset.
+    DATA: lt_cab       TYPE STANDARD TABLE OF zovcab.
+    DATA: ls_cab       TYPE zovcab.
+    DATA: ls_entityset LIKE LINE OF et_entityset.
+
+    DATA: lt_orderby   TYPE STANDARD TABLE OF string.
+    DATA: ld_orderby   TYPE string.
+
+    " montando orderby dinâmico
+    LOOP AT it_order INTO DATA(ls_order).
+      TRANSLATE ls_order-property TO UPPER CASE.
+      TRANSLATE ls_order-order TO UPPER CASE.
+      IF ls_order-order = 'DESC'.
+        ls_order-order = 'DESCENDING'.
+      ELSE.
+        ls_order-order = 'ASCENDING'.
+      ENDIF.
+      APPEND |{ ls_order-property } { ls_order-order }|
+          TO lt_orderby.
+    ENDLOOP.
+    CONCATENATE LINES OF lt_orderby INTO ld_orderby SEPARATED BY ''.
+
+    " ordenação obrigatória caso nenhuma seja definida
+    IF ld_orderby = '' .
+      ld_orderby = 'OrdemId ASCENDING'.
+    ENDIF.
 
     SELECT *
-    INTO TABLE lt_cab
-    FROM zovcab.
+      FROM zovcab
+     WHERE (iv_filter_string)
+  ORDER BY (ld_orderby)
+      INTO TABLE @lt_cab
+     UP TO @is_paging-top ROWS
+    OFFSET @is_paging-skip.
 
     LOOP AT lt_cab INTO ls_cab.
       CLEAR ls_entityset.
@@ -216,7 +242,7 @@ CLASS ZCL_ZOV_DPC_EXT IMPLEMENTATION.
       CONVERT DATE ls_cab-criacao_data
               TIME ls_cab-criacao_hora
          INTO TIME STAMP ls_entityset-datacriacao
-         TIME ZONE sy-zonlo.
+         TIME ZONE 'UTC'. "sy-zonlo.
 
       APPEND ls_entityset TO et_entityset.
     ENDLOOP.
