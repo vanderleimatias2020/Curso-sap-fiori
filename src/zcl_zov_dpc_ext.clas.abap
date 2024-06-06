@@ -249,8 +249,67 @@ CLASS ZCL_ZOV_DPC_EXT IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method OVCABSET_UPDATE_ENTITY.
-  endmethod.
+  METHOD ovcabset_update_entity.
+    DATA: ld_error TYPE flag.
+
+    DATA(lo_msg) = me->/iwbep/if_mgw_conv_srv_runtime~get_message_container( ).
+
+    io_data_provider->read_entry_data(
+      IMPORTING
+        es_data = er_entity
+    ).
+
+    er_entity-ordemid = it_key_tab[ name = 'OrdemId' ]-value.
+
+    " validações
+    IF er_entity-clienteid = 0.
+      ld_error = 'X'.
+      lo_msg->add_message_text_only(
+        EXPORTING
+          iv_msg_type = 'E'
+          iv_msg_text = 'Cliente vazio'
+      ).
+    ENDIF.
+
+    IF er_entity-totalordem < 10.
+      ld_error = 'X'.
+      lo_msg->add_message(
+        EXPORTING
+          iv_msg_type   = 'E'
+          iv_msg_id     = 'ZOV'
+          iv_msg_number = 1
+          iv_msg_v1     = 'R$ 10,00'
+          iv_msg_v2     = |{ er_entity-ordemid }|
+      ).
+    ENDIF.
+
+    IF ld_error = 'X'.
+      RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+        EXPORTING
+          message_container = lo_msg
+          http_status_code  = 500.
+    ENDIF.
+
+    UPDATE zovcab
+       SET clienteid  = er_entity-clienteid
+           totalitens = er_entity-totalitens
+           totalfrete = er_entity-totalfrete
+           totalordem = er_entity-totalordem
+           status     = er_entity-status
+     WHERE ordemid    = er_entity-ordemid.
+
+    IF sy-subrc <> 0.
+      lo_msg->add_message_text_only(
+        EXPORTING
+          iv_msg_type = 'E'
+          iv_msg_text = 'Erro ao atualizar ordem'
+      ).
+
+      RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+        EXPORTING
+          message_container = lo_msg.
+    ENDIF.
+  ENDMETHOD.
 
 
   METHOD ovitemset_create_entity.
