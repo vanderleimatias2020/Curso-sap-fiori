@@ -218,7 +218,7 @@ CLASS ZCL_ZOV_DPC_EXT IMPLEMENTATION.
       APPEND |{ ls_order-property } { ls_order-order }|
           TO lt_orderby.
     ENDLOOP.
-    CONCATENATE LINES OF lt_orderby INTO ld_orderby SEPARATED BY ''.
+    CONCATENATE LINES OF lt_orderby INTO ld_orderby SEPARATED BY ', '. " Ajuste 05/06/2024
 
     " ordenação obrigatória caso nenhuma seja definida
     IF ld_orderby = '' .
@@ -232,6 +232,13 @@ CLASS ZCL_ZOV_DPC_EXT IMPLEMENTATION.
       INTO TABLE @lt_cab
      UP TO @is_paging-top ROWS
     OFFSET @is_paging-skip.
+
+*    SELECT *
+*      INTO TABLE lt_cab
+*      FROM zovcab
+*      WHERE (iv_filter_string)
+*      ORDER BY (ld_orderby).
+
 
     LOOP AT lt_cab INTO ls_cab.
       CLEAR ls_entityset.
